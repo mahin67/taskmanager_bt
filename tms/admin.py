@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
-from .models import SWorker,App_models,work_type
+from .models import SWorker,App_models,work_type,worker_role
 class CustomUserAdmin(UserAdmin):
     """Define admin model for custom User model with no username field."""
     fieldsets = (
@@ -30,3 +30,4 @@ admin.site.register(get_user_model(), CustomUserAdmin)
 admin.site.register(SWorker)
 admin.site.register(App_models)
 admin.site.register(work_type)
+admin.site.register(worker_role)

@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.contrib.auth.models import auth
 
-from .models import SWorker,App_models,work_type,User
+from .models import SWorker,App_models,work_type,User,worker_role
 
 
 # Create your views here.
@@ -14,17 +14,27 @@ def dash(request):
 
 def login(request):
     print(" mahin called")
+    role=worker_role.objects.all()
+    use=User.objects.all()
+    use_role=False
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
 
+        for names in role:
+            for user in use:
+                if user.email==username and names.role_id_id==user.id and names.is_Lmanager== True:
+                    use_role=True
+                else :
+                    use_role=False
         print(username)
         print(password)
         user =  auth.authenticate(username=username,password=password)
         print('user details',user)
 
         if user is not  None:
-            if username=='masud.rahman@ipdcbd.com':
+            if use_role==True:
                 user.is_staff = True
                 user.save()
                 auth.login(request, user)
@@ -39,40 +49,79 @@ def login(request):
             return redirect('/loginview')
 
 def manager_login(request):
-    result = {}
+    result = {
+    }
+    print('result-primes',result)
     rs_list=[]
     post_wlist = SWorker.objects.all()
     names_list= User.objects.all()
+    app_list= App_models.objects.all()
+
 
     for names in post_wlist:
         for res in names_list:
             if res.id==names.name_id and names.permission_status == False and names.work_status == True:
                 work_date=str(names.work_time)
                 work_dur=str(names.time)
-                rs_list.append(res.first_name+' '+res.last_name+'-'+names.work_name+'-'+names.work_descp+'|'+work_date+'|'+work_dur)
-                print ('called',res.first_name)
+                app_name = App_models.objects.get(id=names.app_name_id)
+                #print('APp name',app_name.app_name)
+                result["ID"]=names.id
+                result["Full_name"] = (res.first_name + ' ' + res.last_name)
+                result["App_name"] = app_name.app_name
+                result["Work_name"]=names.work_name
+                result["Work_desc"]=names.work_descp
+                result["Work_date"]=work_date
+                result["Duration"] = names.time
+
+                rs_list.append(result.copy())
+                #print('result',rs_list)
+    print('my list',rs_list)
 
 
     if request.method == 'POST':
-        print("Get called-------",request.POST.get('specbtn'))
-        if request.POST.get('specbtn') is not None :
-            print('specbtn called')
+        print("POST called-------",request.POST.get('SApprove'))
+        rs_list=[]
+        rs_dict={}
+        if request.POST.get('SApprove') is not None :
+            id_val=request.POST.get('Id-val')
+
             for result in post_wlist:
-                print(result.permission_status)
-                result.permission_status=True
-                result.save()
+                print(type(result.id))
+                if result.id == int(id_val):
+                    print(result.permission_status)
+                    result.permission_status=True
+                    result.save()
+
+            for names in post_wlist:
+                print('hello1')
+                for res in names_list:
+                    print('hello2')
+                    if res.id == names.name_id and names.permission_status == False and names.work_status == True:
+                        work_date = str(names.work_time)
+                        work_dur = str(names.time)
+                        app_name = App_models.objects.get(id=names.app_name_id)
+                        print('APp name',app_name.app_name)
+                        rs_dict["ID"] = names.id
+                        rs_dict["Full_name"] = (res.first_name + ' ' + res.last_name)
+                        rs_dict["App_name"] = app_name.app_name
+                        rs_dict["Work_name"] = names.work_name
+                        rs_dict["Work_desc"] = names.work_descp
+                        rs_dict["Work_date"] = work_date
+                        rs_dict["Duration"] = names.time
+                        #
+                        rs_list.append(rs_dict.copy())
+
             return render(request, 'dashboard_manager.html',
-                          {"result": result})
+                          {"result": rs_list})
 
         else:
             return render(request, 'dashboard_manager.html',
-                          { "result" : result })
+                          { "result" : rs_list })
 
-    print(rs_list)
-    result=rs_list
-    print("result", result)
+    #rs_list.append(result)
+    # print("result", result)
 
-    return render(request, 'dashboard_manager.html',{ "result" : result })
+    return render(request, 'dashboard_manager.html',{ "result" : rs_list })
 
 def logout(request):
     user=auth.get_user(request)

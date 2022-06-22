@@ -88,3 +88,6 @@ class work_type(models.Model):
 
     # def __str__(self):
     #     return self.app_name
+class worker_role(models.Model):
+    is_Lmanager=models.BooleanField(default=False)
+    role_id=models.ForeignKey(User,on_delete=models.CASCADE)
