@@ -412,17 +412,17 @@
                       <form method="POST" action="dashboard_manager">
                         {% csrf_token %}
                         <input type="hidden" name="Id-val" value="{{ list.ID }}">
-                        <button type="submit" class="btn btn-success btn-xs sm" data-toggle="tooltip" data-original-title="Edit user" name="SApprove">
+                        <button type="submit" class="btn btn-success btn-xs btn-sm" data-toggle="tooltip" data-original-title="Edit user" name="SApprove">
                           Approve
                         </button>
-                        </form>
+
                       </td>
                     <td class="align-middle">
-                        <button   class="btn btn-danger btn-xs sm " data-toggle="tooltip" data-original-title="Edit user">
+                        <button   class="btn btn-danger btn-xs btn-sm " data-toggle="tooltip" data-original-title="Edit user" type="submits" name="reject" value="{{ list.ID }}">
                           Reject
                         </button>
                       </td>
-
+                    </form>
                     </tr>
                   {% endfor %}
 

@@ -114,9 +114,43 @@ def manager_login(request):
             return render(request, 'dashboard_manager.html',
                           {"result": rs_list})
 
-        else:
+        elif request.POST.get('reject') is not None :
+            rs_list = []
+            rs_dict = {}
+
+
+            id =int(request.POST.get('reject'))
+            print('Super MOve',id)
+            res=SWorker.objects.get(pk=id).delete()
+
+            post_wlist = SWorker.objects.all()
+            names_list = User.objects.all()
+            app_list = App_models.objects.all()
+
+            for names in post_wlist:
+                print('hello1')
+                for res in names_list:
+                    print('hello2')
+                    if res.id == names.name_id and names.permission_status == False and names.work_status == True:
+                        work_date = str(names.work_time)
+                        work_dur = str(names.time)
+                        app_name = App_models.objects.get(id=names.app_name_id)
+                        print('APp name', app_name.app_name)
+                        rs_dict["ID"] = names.id
+                        rs_dict["Full_name"] = (res.first_name + ' ' + res.last_name)
+                        rs_dict["App_name"] = app_name.app_name
+                        rs_dict["Work_name"] = names.work_name
+                        rs_dict["Work_desc"] = names.work_descp
+                        rs_dict["Work_date"] = work_date
+                        rs_dict["Duration"] = names.time
+                        #
+                        rs_list.append(rs_dict.copy())
+
+
+            print('rs_list_after Delete',rs_list)
             return render(request, 'dashboard_manager.html',
-                          { "result" : rs_list })
+                          {"result": rs_list})
+
 
     #rs_list.append(result)
     # print("result", result)
@@ -211,9 +245,21 @@ def work_entry(request):
                             print('Result Saved')
                             result.work_status=True
                             result.save()
+                return render(request, 'register_work.html',
+                              {"App_models": app_list, "work_type": work_list, "SWorker": post_wlist,
+                               "User_id": full_name})
 
+        elif request.GET.get('idscbtns') is not None :
             return render(request, 'register_work.html',
                    {"App_models": app_list, "work_type": work_list, "SWorker": post_wlist, "User_id": full_name})
+
+        elif request.GET.get('rmbtn') is not None :
+            print('Super Saiyan',request.GET.get('rmbtn'))
+            id = int(request.GET.get('rmbtn'))
+            del_list = SWorker.objects.get(pk=id).delete()
+            return render(request, 'register_work.html',
+                   {"App_models": app_list, "work_type": work_list, "SWorker": post_wlist, "User_id": full_name})
+
 
         else:
             return render(request, 'register_work.html',
