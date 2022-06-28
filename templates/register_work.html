@@ -341,12 +341,17 @@
 
               <ul class="card-text">
                <li>{{result.app_name}}-{{result.work_name}}-{{result.work_time}}</li>
+              <button class="btn btn-danger btn-xs btn-sm" type="submit" name="rmbtn" value="{{ result.id }}">Remove</button>
+               <button class="btn btn-primary btn-xs btn-sm" type="submit" name="specbtn" value="{{ result.id }}">Send</button>
+
               </ul>
+
               {% endif %}
               {% endfor %}
-              <button class="btn btn-primary">Discard</button>
-              <button class="btn btn-primary" type="submit" name="specbtn">Submit</button>
-            </form>
+              <button class="btn btn-primary" type="submit" name="discbtns">Discard</button>
+              <button class="btn btn-primary" type="submit" name="specabtn" >Submit</button>
+
+               </form>
             </div>
           </div>
         </div>
