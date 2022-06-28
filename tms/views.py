@@ -236,18 +236,34 @@ def work_entry(request):
     elif request.method == 'GET':
         print("Get called-------",request.GET.get('specbtn'))
         if request.GET.get('specbtn') is not None :
-            print('specbtn called')
+            print('specbtn called',request.GET.get('specbtn'))
+            id =int(request.GET.get('specbtn'))
             for result in post_wlist:
                 print(result.work_status)
                 for name in use2:
-                    if name.id == result.name_id:
+                    if name.id == result.name_id and id == result.id:
                         if name.email== use1:
-                            print('Result Saved')
+                            print('Result Saved',result.id)
                             result.work_status=True
                             result.save()
-                return render(request, 'register_work.html',
+
+            return render(request, 'register_work.html',
                               {"App_models": app_list, "work_type": work_list, "SWorker": post_wlist,
                                "User_id": full_name})
+
+        elif request.GET.get('specabtn') is not None :
+            for result in post_wlist:
+                print(result.work_status)
+                for name in use2:
+                    if name.id == result.name_id  and result.work_status==False:
+                        if name.email== use1:
+                            print('Result Saved',result.id)
+                            result.work_status=True
+                            result.save()
+
+            return render(request, 'register_work.html',
+                   {"App_models": app_list, "work_type": work_list, "SWorker": post_wlist, "User_id": full_name})
+
 
         elif request.GET.get('idscbtns') is not None :
             return render(request, 'register_work.html',
